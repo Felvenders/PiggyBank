@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PiggyBank</title>
+</head>
+<body>
+
+<div th:insert="fragments/header :: header"></div>
+<div th:insert="fragments/header :: header-css"></div>
+
+  <form th:method="PATCH" th:object="${incomeMonth}">
+
+  <h3>Изменение дохода</h3>
+
+  <div>
+
+    <select name="incomeCategories" id="incomeCategories" th:field="*{category_id}">
+      <option value="0">Выберете категорию</option>
+      <option th:each="income: ${incomeCategoriesList}" th:value="${income.id}" th:text="${income.name}"></option>
+    </select>
+
+    <br><br>
+
+    <label for="sum">Введите сумму</label>
+    <input type="text" th:field="*{amount}" id="sum" />
+
+    <br><br>
+
+    <input type="date" th:field="*{date}" id="date" />
+
+    <br><br>
+
+    <input type="text" th:field="*{note}" id="note"/>
+
+    <br><br>
+
+    <input type="submit" value="Сохранить изменения"/>
+
+  </div>
+</form>
+
+<br>
+
+<form th:method="DELETE" th:object="${incomeMonth}">
+  <input type="submit" value="Удалить"/>
+</form>
+
+<div th:insert="fragments/footer :: footer"></div>
+
+</body>
+</html>

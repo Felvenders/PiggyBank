@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>PiggyBank</title>
+<!--  <script src = "https://MomentJS.com/downloads/moment.js" ></script>-->
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>-->
+<!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+<!--  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+<!--  <script src="https://code.highcharts.com/highcharts.js"></script>-->
+</head>
+<body>
+
+<div th:insert="fragments/header :: header"></div>
+<div th:insert="fragments/header :: header-css"></div>
+
+<div style="font-size: 18px" th:if="${!incomeDetailsList.isEmpty()}" th:id="${inflow}" th:text="Поступления + ': ' + ${inflow}"></div>
+<div style="font-size: 18px" th:if="${!expenseDetailsList.isEmpty()}" th:id="${outflow}" th:text="Траты + ': ' + ${outflow}"></div>
+<br>
+<div style="font-size: 18px" th:if="${result != null}" th:id="${result}" th:text="Итого + ': ' + ${result}" id="result"></div>
+
+<div th:if="${message}">
+  <div id="message" class="alert alert-danger">
+
+  </div>
+</div>
+
+<button type="button" class="btn btn-light" id="previousMonth" href="">Прошлый месяц</button>
+<button type="button" class="btn btn-light" id="nextMonth" href="">Следующий месяц</button>
+
+<form th:method="GET" th:action="@{/previousTransactions+'?'+{min_date}(min_date=${min_date})+'&'+{max_date}(max_date=${max_date})}" th:object="${incomeDetailsList}">
+
+  <table class="display" style="width:100%">
+    <thead>
+    <tr>
+      <th>Название поступления</th>
+      <th>Дата</th>
+      <th>Сумма</th>
+      <th>Описание поступления</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="incdet : ${incomeDetailsList}">
+      <td th:text="${incdet.incomeCategories.name}"></td>
+      <td id="test_income" class="test_income" th:text="${incdet.date}"></td>
+      <td th:text="${incdet.amount}"></td>
+      <td th:text="${incdet.note}"></td>
+      <td><a th:href="@{/{id}/editIncomeMonth(id=${incdet.getId()})}">Изменить поступление</a></td>
+  </table>
+</form>
+
+<br>
+
+<form th:method="GET" th:action="@{/previousTransactions+'?'+{min_date}(min_date=${min_date})+'&'+{max_date}(max_date=${max_date})}" th:object="${expenseDetailsList}">
+
+  <table class="display" style="width:100%">
+    <thead>
+    <tr>
+      <th>Название траты</th>
+      <th>Дата</th>
+      <th>Сумма</th>
+      <th>Описание траты</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="expdet : ${expenseDetailsList}">
+      <td th:text="${expdet.expenseCategories.name}"></td>
+      <td id="test" class="test" th:text="${expdet.date}"></td>
+      <td th:text="${expdet.amount}"></td>
+      <td th:text="${expdet.note}"></td>
+      <td><a th:href="@{/{id}/editExpenseMonth(id=${expdet.getId()})}">Изменить трату</a></td>
+  </table>
+</form>
+
+<br><br>
+
+<div th:if="${!incomeDetailsList.isEmpty()}" class="col-xl-4 col-lg-5" style="margin-left: 260px">
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="chart-pie pt-4 pb-2">
+        <div th:if="${!incomeDetailsList.isEmpty()}" id="chartContainerIncome" style="height: 370px; width: 100%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div th:if="${!expenseDetailsList.isEmpty()}" class="col-xl-4 col-lg-5" style="margin-left: 950px; margin-top: -459px; width: 634px ">
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <div class="chart-pie pt-4 pb-2">
+          <div th:if="${!expenseDetailsList.isEmpty()}" id="chartContainerExpense" style="height: 370px; width: 100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div th:insert="fragments/footer :: footer"></div>
+
+</body>
+
+<script>
+  let params = (new URL(document.location)).searchParams;
+  let date = params.get("min_date");
+  date = new Date(date);
+  let month = date.toLocaleString('default', {month: 'long'});
+  let year = date.getFullYear();
+
+  document.getElementById('message').textContent = "Нет операций за " + month + " " + year + " года";
+</script>
+
+<script src="previousMonth.js"></script>
+<script src="nextMonth.js"></script>
+
+<script th:inline="javascript">
+  (function () {
+    var countIncomeByCategoryIdPrevious = /*[[${countIncomeByCategoryIdPrevious}]]*/ [];
+
+    var series = [];
+    var data = [];
+
+    for (var i = 0; i < countIncomeByCategoryIdPrevious.length; i++) {
+      var object = {};
+      object.name = countIncomeByCategoryIdPrevious[i].name.toUpperCase();
+      object.y = countIncomeByCategoryIdPrevious[i].amount;
+      data.push(object);
+    }
+    var seriesObject = {
+      name: 'Income by CategoryId',
+      colorByPoint: true,
+      data: data
+    };
+    series.push(seriesObject);
+    drawPieChart(series);
+
+    function drawPieChart(series) {
+      Highcharts.chart('chartContainerIncome', {
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+          type: 'pie'
+        },
+        title: {
+          text: 'Поступления'
+        },
+        tooltip: {
+          formatter: function () {
+            return '<strong>' + this.key + ': </strong>' + this.y;
+          }
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              format: '<b>{point.name}</b>: {point.y}'
+            }
+          }
+        },
+        series: series
+      });
+    }
+
+  })();
+</script>
+
+<script th:inline="javascript">
+  (function () {
+    var countExpenseByCategoryIdPrevious = /*[[${countExpenseByCategoryIdPrevious}]]*/ [];
+
+    var series = [];
+    var data = [];
+
+    for (var i = 0; i < countExpenseByCategoryIdPrevious.length; i++) {
+      var object = {};
+      object.name = countExpenseByCategoryIdPrevious[i].name.toUpperCase();
+      object.y = countExpenseByCategoryIdPrevious[i].amount;
+      data.push(object);
+    }
+    var seriesObject = {
+      name: 'Expense by CategoryId',
+      colorByPoint: true,
+      data: data
+    };
+    series.push(seriesObject);
+    drawPieChart(series);
+
+    function drawPieChart(series) {
+      Highcharts.chart('chartContainerExpense', {
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+          type: 'pie'
+        },
+        title: {
+          text: 'Траты'
+        },
+        tooltip: {
+          formatter: function () {
+            return '<strong>' + this.key + ': </strong>' + this.y;
+          }
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              format: '<b>{point.name}</b>: {point.y}'
+            }
+          }
+        },
+        series: series
+      });
+    }
+
+  })();
+</script>
+</html>

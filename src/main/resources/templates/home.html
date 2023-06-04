@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PiggyBank</title>
+</head>
+<body>
+
+<div th:insert="fragments/header :: header"></div>
+<div th:insert="fragments/header :: header-css"></div>
+
+<div class="container">
+
+    <div class="starter-template">
+        <h1>PiggyBank</h1>
+        <h2>Посетите <a th:href="@{/registration}">страницу регистрации</a></h2>
+        <h2><a th:href="@{/expenseTransactions}">Добавить трату</a></h2>
+        <h2><a th:href="@{/incomeTransactions}">Добавить поступление</a></h2>
+        <h2><a th:href="@{/transactionsMonth}">Поступления и траты за последний месяц</a></h2>
+    </div>
+
+</div>
+
+<div th:insert="fragments/footer :: footer"></div>
+
+</body>
+</html>

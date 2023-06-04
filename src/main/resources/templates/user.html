@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PiggyBank</title>
+</head>
+<body>
+    <div th:insert="fragments/header :: header"></div>
+    <div th:insert="fragments/header :: header-css"></div>
+
+    <form th:method="PATCH" th:object="${user}">
+
+        <a th:href="@{/editUser/{id}(id=${user.id})}">Изменить пользователя</a>
+
+        <br>
+
+        <label for="email">Почтовый адрес</label>
+        <span th:text="${user.email}" id="email"></span>
+
+        <br>
+
+        <label for="username">Имя пользователя</label>
+        <span th:text="${user.username}" id="username"></span>
+
+        <br><br>
+
+    </form>
+
+    <div th:insert="fragments/footer :: footer"></div>
+
+</body>
+</html>

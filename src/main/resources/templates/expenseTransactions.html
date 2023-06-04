@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PiggyBank</title>
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+<div th:insert="fragments/header :: header-css"></div>
+
+<br>
+<h3 align="center">Добавление траты</h3>
+<br>
+
+<form th:method="POST" th:action="@{/expenseTransactions}" th:object="${expenseDetails}">
+
+    <div class="container-lg">
+
+        <select class="form-select-lg" name="expenseCategories" id="expenseCategories" th:field="*{expenseCategories}">
+            <option value="0">Выберете категорию</option>
+            <option th:each="expense: ${expenseCategories}" th:value="${expense.id}" th:text="${expense.name}"></option>
+        </select>
+
+        <br><br>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Введите сумму</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" th:field="*{amount}" id="sum" placeholder="0">
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            <input class="form-control" type="date" th:field="*{date}" id="date" placeholder="Дата"/>
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            <textarea th:field="*{note}" class="form-control" id="note" placeholder="Описание"></textarea>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <input type="submit" class="btn btn-lg btn-primary btn-block" value="Сохранить"/>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6">
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<div th:insert="fragments/footer :: footer"></div>
+
+</body>
+</html>
