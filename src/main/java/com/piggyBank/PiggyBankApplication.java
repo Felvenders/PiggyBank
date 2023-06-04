@@ -26,6 +26,9 @@ public class PiggyBankApplication implements WebMvcConfigurer {
 				.addResourceLocations("classpath:/META-INF/resources/webjars/");
 
 		registry.addResourceHandler("/**")
+				.addResourceLocations("classpath:/static/");
+
+		registry.addResourceHandler("/**")
 				.addResourceLocations("classpath:/templates/");
 	}
 
