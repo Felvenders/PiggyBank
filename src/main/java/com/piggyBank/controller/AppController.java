@@ -1,7 +1,5 @@
 package com.piggyBank.controller;
 
-import com.google.gson.Gson;
-import com.piggyBank.dao.CategoryIdCountDAO;
 import com.piggyBank.entity.*;
 import com.piggyBank.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.YearMonth;
 import java.util.Date;
 import java.util.List;
 

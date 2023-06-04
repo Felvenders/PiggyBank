@@ -1,28 +1,19 @@
 package com.piggyBank.controller;
 
 import com.piggyBank.entity.Users;
-//import com.piggyBank.repos.UserRolesRepository;
 import com.piggyBank.repos.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping
@@ -30,9 +21,6 @@ public class RegistrationController {
 
     @Autowired
     private UsersRepository usersRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -104,6 +92,8 @@ public class RegistrationController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Users users = usersRepository.findByEmail(auth.getName());
 
+            users.setPassword(null);
+
             if (users.getId() == id) {
                 model.addAttribute("users", users);
 
@@ -116,11 +106,11 @@ public class RegistrationController {
         }
 
         @PatchMapping("/editUser/{id}")
-        public String patchUserAccount(@Valid @ModelAttribute("user") Users user,
-                                       @PathVariable("id") Integer id, Model model) {
+        public String patchUserAccount(@ModelAttribute("users") Users users,
+                                       @PathVariable("id") Integer id) {
 
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            usersRepository.updateUser(id, user.getUsername(), user.getPassword());
+            users.setPassword(passwordEncoder.encode(users.getPassword()));
+            usersRepository.updateUser(id, users.getUsername(), users.getPassword());
 
             return "redirect:/";
         }

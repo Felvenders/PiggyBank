@@ -80,8 +80,8 @@ public class Users {
         return password;
     }
 
-    public void setPassword(String passhash) {
-        this.password = passhash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 /*    public Set<ExpenseCategories> getExpenseCategories() {

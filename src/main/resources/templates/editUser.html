@@ -15,16 +15,49 @@
 
     <br><br>
 
-    <label for="password">Пароль</label>
-    <input type="text" th:field="*{password}" id="password" placeholder="Введите новый пароль"/>
+    <label for="first_password">Введите новый пароль</label>
+    <input type="password" th:field="*{password}" id="first_password"/>
 
     <br><br>
 
-    <input type="submit" value="Сохранить изменения"/>
+    <label for="second_password">Повторите пароль</label>
+    <input type="password" id="second_password"/>
+
+    <br><br>
+
+    <p id="valid"></p>
+
+    <br>
+
+    <input type="submit" id="submit" value="Сохранить изменения" disabled="disabled"/>
 
 </form>
 
+
 <div th:insert="fragments/footer :: footer"></div>
+
+<script>
+    $(document).ready(function() {
+        $("#first_password, #second_password").keyup(validate);
+
+        function validate() {
+            var pass1 = $("#first_password").val();
+            var pass2 = $("#second_password").val();
+
+            if (pass1 === pass2) {
+                $("#valid").text("Пароли совпадают");
+                let dis = document.getElementById('submit');
+                dis.removeAttribute("disabled");
+            }
+
+            else {
+                $("#valid").text("Пароли не совпадают");
+                let dis = document.getElementById('submit');
+                dis.setAttribute("disabled", "disabled")
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
